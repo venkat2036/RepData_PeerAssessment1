@@ -8,65 +8,71 @@ output:
 
 ## Loading and preprocessing the data
 Read  data into *data*
-```{r}
+
+```r
 data <- read.csv("activity.csv")
 data$date <- as.Date(data$date, format = "%Y-%m-%d")
-
 ```
 
 
 
 ## What is mean total number of steps taken per day?
 ### Histogram for Steps
-```{r,}
+
+```r
 library(ggplot2)
 hist(data$steps[!is.na(data$steps)], main="Histogram of steps", xlab="Steps")
-
 ```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
 
   
 ### Mean and Median for Steps
 Here is code for mean and median:
-```{r}
+
+```r
         meanSteps <- mean(data$steps, na.rm=T)
         medianSteps <- median(data$steps, na.rm=T)
 ```
-meanSteps = `r meanSteps` and medianSteps = `r medianSteps`
+meanSteps = 37.3825996 and medianSteps = 0
 
 ## What is the average daily activity pattern?
 ### Plot for Average Daily Activity
 Code for the plot for Average Daily Activity:
-```{r}
+
+```r
         steps_means <- aggregate(data$steps, list(interval=data$interval), mean, na.rm=T)
         plot(steps_means$interval, steps_means$x, type='l', xlab="interval", ylab="step means", main="Average Daily Activity")
-
 ```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
 
 ### Maximum Average Activity and Its Interval
 Code for maximum average activity and its interval
-```{r}
+
+```r
         index <- which.max(steps_means$x)
         maximum <- steps_means$x[index]
         interval <- steps_means$interval[index]
 ```
 
-Maximum average activity = `r maximum` and its interval = `r interval`
+Maximum average activity = 206.1698113 and its interval = 835
 
 ## Imputing missing values
 ### Total No of missing values
 Code for Total No of missing values
-```{r}
-        totalNAs <- sum(is.na(data))
 
+```r
+        totalNAs <- sum(is.na(data))
 ```
-Total NAs = `r totalNAs`
+Total NAs = 2304
 
 ### Strategy for filling missing values
 We replace each NA for a step by its interval's average.
 
 ### Code for filling missing values
-```{r}
 
+```r
 # This function is used on the members of the list resultant from splitting data based on 
 # interval. x has same structure as the structure of data. x corresponds to particular interval.
 # The interval can be found from x$interval, which has the same value in all its entries
@@ -84,36 +90,39 @@ split_data <- split(data, data$interval)
 split_data_without_NAs <- lapply(split_data, replaceNAs)
 # Merge interval-wise grouping of data
 new_data <- do.call(rbind, split_data_without_NAs)
-
 ```
 
 ### New Data Histogram for Steps
-```{r,}
+
+```r
         # Plot histogram for data without NAs
         hist(new_data$steps, main="New Data Histogram of steps")
-
 ```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png) 
 
   
 This histogram is slightly different due to 2304 NAs that are being replaced with activity avearages.
   
 ### New Data Mean and Median for Steps
 Here is code for the new mean and new median:
-```{r}
+
+```r
         # calculate new mean
         new_meanSteps <- mean(new_data$steps)
         # Calcualte new median
         new_medianSteps <- median(new_data$steps)
 ```
-meanSteps = `r meanSteps` and medianSteps = `r medianSteps`  
-new_meanSteps = `r new_meanSteps` and new_medianSteps = `r new_medianSteps`
+meanSteps = 37.3825996 and medianSteps = 0  
+new_meanSteps = 37.3825996 and new_medianSteps = 0
 
 Replacing NAs by their average steps have not made a difference, though there is a difference in the totals with or without NAs.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ### Code to plot the activity averages by interval and datetype
-```{r}
+
+```r
         # Create additional column datatype to indicate whether a date is weekday or weekend
         data$datetype <- ifelse ( weekdays(data$date) %in% c("Saturday", "Sunday"), 
                                   "weekend", "weekday")
@@ -128,7 +137,8 @@ Replacing NAs by their average steps have not made a difference, though there is
         # Plot the graph
         g <- ggplot(steps_means_datetype, aes(x=interval, y=NumberOfSteps)) + geom_line()
         g + facet_grid(datetype ~ .)
-
 ```
+
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
 
 There are differences in activity patterns for weekdays and weekend. In the weekdays, more activities are done on the average before the interval 1000. But, on the weekend, more activities on the average between itervals 1000 and 2000 on the whole.
