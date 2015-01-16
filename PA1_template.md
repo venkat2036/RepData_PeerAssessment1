@@ -7,7 +7,7 @@ output:
 
 
 ## Loading and preprocessing the data
-Read  data into *data*
+Read into *data*
 
 ```r
 data <- read.csv("activity.csv")
@@ -42,7 +42,7 @@ Code for the plot for Average Daily Activity:
 
 ```r
         steps_means <- aggregate(data$steps, list(interval=data$interval), mean, na.rm=T)
-        plot(steps_means$interval, steps_means$x, type='l', xlab="interval", ylab="step means", main="Average Daily Activity")
+        plot(steps_means$interval, steps_means$x, type='l', xlab="interval", ylab="steps average", main="Average Daily Activity")
 ```
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
@@ -96,7 +96,7 @@ new_data <- do.call(rbind, split_data_without_NAs)
 
 ```r
         # Plot histogram for data without NAs
-        hist(new_data$steps, main="New Data Histogram of steps")
+        hist(new_data$steps, main="New Data Histogram of steps", xlab="steps")
 ```
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png) 
@@ -136,7 +136,7 @@ Replacing NAs by their average steps have not made a difference, though there is
 
         # Plot the graph
         g <- ggplot(steps_means_datetype, aes(x=interval, y=NumberOfSteps)) + geom_line()
-        g + facet_grid(datetype ~ .)
+        g + facet_grid(datetype ~ .) + labs(x = "interval", y = "steps average")
 ```
 
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
